@@ -1,5 +1,31 @@
 var tabs;
 
+function compare_domains(a, b)
+{
+	var aparts;
+	var bparts;
+
+	aparts = a.split(".").reverse();
+	bparts = b.split(".").reverse();
+
+	while (aparts.length && bparts.length) {
+		if (bparts.length && !aparts.length) {
+			return -1;
+		}
+		if (aparts.length && !bparts.length) {
+			return 1;
+		}
+		if (aparts[0] < bparts[0]) {
+			return -1;
+		}
+		if (aparts[0] > bparts[0]) {
+			return 1;
+		}
+		aparts.shift();
+		bparts.shift();
+	}
+}
+
 function compare_tabs(a, b)
 {
 	/* todo: sort by access method first, like chrome: vs http/https */
@@ -19,6 +45,8 @@ function compare_tabs(a, b)
 
 	asuffix = a.url;
 	bsuffix = b.url;
+
+	/* check access method */
 
 	i = asuffix.indexOf("://");
 
@@ -44,6 +72,36 @@ function compare_tabs(a, b)
 
 	if (bprefix == "chrome" && aprefix != "chrome") {
 		return 1;
+	}
+
+	/* check domain */
+
+	i = asuffix.indexOf("/");
+
+	if (i == -1) {
+		aprefix = asuffix;
+		asuffix = "";
+	} else {
+		aprefix = asuffix.substr(0, i);
+		asuffix = asuffix.substr(i);
+	}
+
+	i = bsuffix.indexOf("/");
+
+	if (i == -1) {
+		bprefix = bsuffix;
+		bsuffix = "";
+	} else {
+		bprefix = bsuffix.substr(0, i);
+		bsuffix = bsuffix.substr(i);
+	}
+
+	var c;
+
+	c = compare_domains(aprefix, bprefix);
+
+	if (c != 0) {
+		return c;
 	}
 
 	if (asuffix < bsuffix)
