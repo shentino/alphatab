@@ -1,5 +1,18 @@
 var tabs;
 
+function compare_methods(a, b)
+{
+	if (a == "chrome" && b != "chrome") {
+		return -1;
+	}
+
+	if (a != "chrome" && b == "chrome") {
+		return 1;
+	}
+
+	return 0;
+}
+
 function compare_domains(a, b)
 {
 	var aparts;
@@ -24,6 +37,8 @@ function compare_domains(a, b)
 		aparts.shift();
 		bparts.shift();
 	}
+
+	return 0;
 }
 
 function compare_tabs(a, b)
@@ -36,6 +51,7 @@ function compare_tabs(a, b)
 	/* 3: rest of url */
 
 	var i;
+	var c;
 
 	var aprefix;
 	var bprefix;
@@ -51,27 +67,27 @@ function compare_tabs(a, b)
 	i = asuffix.indexOf("://");
 
 	if (i == -1) {
-		return 1;
+		aprefix = "http";
+	} else {
+		asuffix = asuffix.substr(i + 3)
 	}
 
 	aprefix = asuffix.substr(0, i);
-	asuffix = asuffix.substr(i + 3)
 
 	i = bsuffix.indexOf("://");
 
 	if (i == -1) {
-		return -1;
+		bprefix = "http";
+	} else {
+		bsuffix = bsuffix.substr(i + 3);
 	}
 
 	bprefix = bsuffix.substr(0, i);
-	bsuffix = bsuffix.substr(i + 3)
 
-	if (aprefix == "chrome" && bprefix != "chrome") {
-		return -1;
-	}
+	c = compare_methods(aprefix, bprefix);
 
-	if (bprefix == "chrome" && aprefix != "chrome") {
-		return 1;
+	if (c != 0) {
+		return c;
 	}
 
 	/* check domain */
@@ -96,18 +112,21 @@ function compare_tabs(a, b)
 		bsuffix = bsuffix.substr(i);
 	}
 
-	var c;
-
 	c = compare_domains(aprefix, bprefix);
 
 	if (c != 0) {
 		return c;
 	}
 
-	if (asuffix < bsuffix)
+	/* compare the rest of the url */
+
+	if (asuffix < bsuffix) {
 		return -1;
-	if (asuffix > bsuffix)
+	}
+
+	if (asuffix > bsuffix) {
 		return 1;
+	}
 }
 
 function get_windows(windows)
@@ -128,8 +147,7 @@ function get_windows(windows)
 			wId = tabs[0].windowId;
 		}
 
-		chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i})
-		console.log(tabs[i].url);
+		chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
 	}
 }
 
@@ -140,7 +158,7 @@ function sort_tabs(tab)
 
 	tabs = new Array;
 
-	chrome.windows.getAll({populate: true}, get_windows);
+	chrome.windows.getAll({"populate": true}, get_windows);
 }
 
 chrome.browserAction.onClicked.addListener(sort_tabs);
