@@ -67,22 +67,22 @@ function compare_tabs(a, b)
 	i = asuffix.indexOf("://");
 
 	if (i == -1) {
+		console.log("URL " + a.url + " is missing access method");
 		aprefix = "http";
 	} else {
+		aprefix = asuffix.substr(0, i);
 		asuffix = asuffix.substr(i + 3)
 	}
-
-	aprefix = asuffix.substr(0, i);
 
 	i = bsuffix.indexOf("://");
 
 	if (i == -1) {
+		console.log("URL " + b.url + " is missing access method");
 		bprefix = "http";
 	} else {
+		bprefix = bsuffix.substr(0, i);
 		bsuffix = bsuffix.substr(i + 3);
 	}
-
-	bprefix = bsuffix.substr(0, i);
 
 	c = compare_methods(aprefix, bprefix);
 
@@ -127,6 +127,10 @@ function compare_tabs(a, b)
 	if (asuffix > bsuffix) {
 		return 1;
 	}
+
+	/* if they're identical, sort them by where they're already at */
+
+	return (a.index - b.index);
 }
 
 function get_windows(windows)
