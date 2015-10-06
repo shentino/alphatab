@@ -1,12 +1,27 @@
-var tabs;
+var gflag;
+var curwindow;
+
+function method_rank(a)
+{
+	switch(a) {
+	case "chrome": return 0;
+	case "view-source": return 1;
+	case "https": return 2;
+	}
+}
 
 function compare_methods(a, b)
 {
-	if (a == "chrome" && b != "chrome") {
+	var ar, br;
+
+	ar = method_rank(a);
+	br = method_rank(b);
+
+	if (ar < br) {
 		return -1;
 	}
 
-	if (a != "chrome" && b == "chrome") {
+	if (ar > br) {
 		return 1;
 	}
 
@@ -135,35 +150,81 @@ function compare_tabs(a, b)
 
 function get_windows(windows)
 {
-	var i;
-	var wId;
+	if (gflag) {
+		/* gather all tabs into a single window */
+		var i;
+		var wId;
+		var tabs;
 
-	for (i = 0; i < windows.length; i++) {
-		var window = windows[i];
+		tabs = new Array;
 
-		tabs = tabs.concat(window.tabs);
-	}
+		for (i = 0; i < windows.length; i++) {
+			var window = windows[i];
 
-	tabs.sort(compare_tabs);
-
-	for (i = 0; i < tabs.length; i++) {
-		if (i == 0) {
-			wId = tabs[0].windowId;
+			tabs = tabs.concat(window.tabs);
 		}
 
-		chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
-	}
+		tabs.sort(compare_tabs);
+
+		wId = curwindow.id;
+
+		for (i = 0; i < tabs.length; i++) {
+			chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
+		}
+	} else {
+		/* keep each tab in its own window */
+		var i;
+
+		for (i = 0; i < windows.length; i++) {
+			var window = windows[i];
+			var tabs = window.tabs;
+			var j;
+			var wId;
+			
+			wId = window.id;
+
+			tabs.sort(compare_tabs);
+
+			for (j = 0; j < tabs.length; j++) {
+				chrome.tabs.move(tabs[j].id, {"windowId": wId, "index": j});
+			}
+		}
+	}	
 }
 
-function sort_tabs(tab)
+function get_window(window)
 {
 	var i;
 	var newwindow;
 
 	tabs = new Array;
+	curwindow = window;
 
 	chrome.windows.getAll({"populate": true}, get_windows);
 }
 
-chrome.browserAction.onClicked.addListener(sort_tabs);
+function sort_tabs(tab)
+{
+	chrome.windows.getCurrent(get_window);
+}
 
+function load_settings()
+{
+	chrome.storage.sync.get(
+		{
+			gather: false
+		}, function(items) {
+			gflag = items.gather;
+		}
+	)
+}
+
+document.addEventListener('DOMContentLoaded', load_settings);
+
+chrome.storage.onChanged.addListener(
+	function(changes, areaName) {
+		load_settings();
+	}
+);
+
+chrome.browserAction.onClicked.addListener(sort_tabs);
