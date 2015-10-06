@@ -4,9 +4,17 @@ var curwindow;
 function method_rank(a)
 {
 	switch(a) {
-	case "chrome": return 0;
-	case "view-source": return 1;
-	case "https": return 2;
+	case "chrome":
+		return 0;
+	case "view-source":
+		return 1;
+	case "https":
+		return 2;
+	case "http":
+		return 2;
+	default:
+		console.log("Unknown access method " + a);
+		return 3;
 	}
 }
 
