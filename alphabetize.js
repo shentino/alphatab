@@ -158,62 +158,58 @@ function compare_tabs(a, b)
 
 function get_windows(windows)
 {
-	if (gflag) {
-		/* gather all tabs into a single window */
-		var i;
-		var wId;
-		var tabs;
+	var i;
+	var wId;
+	var tabs;
 
-		tabs = new Array;
+	wId = curwindow.id;
+	tabs = new Array;
 
-		for (i = 0; i < windows.length; i++) {
-			var window = windows[i];
+	/* gather all tabs into a single window */
+	for (i = 0; i < windows.length; i++) {
+		var window = windows[i];
 
-			tabs = tabs.concat(window.tabs);
-		}
+		tabs = tabs.concat(window.tabs);
+	}
 
-		tabs.sort(compare_tabs);
+	tabs.sort(compare_tabs);
 
-		wId = curwindow.id;
+	for (i = 0; i < tabs.length; i++) {
+		chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
+	}
 
-		for (i = 0; i < tabs.length; i++) {
-			chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
-		}
-	} else {
-		/* keep each tab in its own window */
-		var i;
-
-		for (i = 0; i < windows.length; i++) {
-			var window = windows[i];
-			var tabs = window.tabs;
-			var j;
-			var wId;
-			
-			wId = window.id;
-
-			tabs.sort(compare_tabs);
-
-			for (j = 0; j < tabs.length; j++) {
-				chrome.tabs.move(tabs[j].id, {"windowId": wId, "index": j});
-			}
-		}
-	}	
+	console.log("Done sorting all windows");
 }
 
 function get_window(window)
 {
-	var i;
-	var newwindow;
-
-	tabs = new Array;
 	curwindow = window;
 
-	chrome.windows.getAll({"populate": true}, get_windows);
+	if (gflag) {
+		chrome.windows.getAll({"populate": true}, get_windows);
+	} else {
+		/* keep each tab in its own window */
+		var wId;
+		var tabs;
+		var i;
+
+		wId = curwindow.id;
+
+		tabs = new Array;
+		tabs = tabs.concat(curwindow.tabs);
+		tabs.sort(compare_tabs);
+
+		for (i = 0; i < tabs.length; i++) {
+			chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
+		}
+
+		console.log("Done sorting current window");
+	}
 }
 
 function sort_tabs(tab)
 {
-	chrome.windows.getCurrent(get_window);
+	chrome.windows.getCurrent({"populate": true}, get_window);
 }
 
 function load_settings()
