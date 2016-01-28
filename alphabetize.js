@@ -177,8 +177,6 @@ function get_windows(windows)
 	for (i = 0; i < tabs.length; i++) {
 		chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
 	}
-
-	console.log("Done sorting all windows");
 }
 
 function get_window(window)
@@ -202,8 +200,6 @@ function get_window(window)
 		for (i = 0; i < tabs.length; i++) {
 			chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
 		}
-
-		console.log("Done sorting current window");
 	}
 }
 
