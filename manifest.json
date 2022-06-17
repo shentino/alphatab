@@ -14,9 +14,7 @@
   },
 
   "background": {
-    "service_worker": [
-      "alphabetize.js"
-    ]
+    "service_worker": "alphabetize.js"
   },
 
   "permissions": [
