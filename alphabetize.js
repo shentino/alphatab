@@ -203,23 +203,18 @@ function get_window(window)
 {
 	curwindow = window;
 
-	if (gflag) {
-		chrome.windows.getAll({"populate": true}, get_windows);
-	} else {
-		/* keep each tab in its own window */
-		var wId;
-		var tabs;
-		var i;
+	var wId;
+	var tabs;
+	var i;
 
-		wId = curwindow.id;
+	wId = curwindow.id;
 
-		tabs = new Array;
-		tabs = tabs.concat(curwindow.tabs);
-		tabs.sort(compare_tabs);
+	tabs = new Array;
+	tabs = tabs.concat(curwindow.tabs);
+	tabs.sort(compare_tabs);
 
-		for (i = 0; i < tabs.length; i++) {
-			chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
-		}
+	for (i = 0; i < tabs.length; i++) {
+		chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
 	}
 }
 
