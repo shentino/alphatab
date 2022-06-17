@@ -176,29 +176,6 @@ function compare_tabs(a, b)
 	return (a.index - b.index);
 }
 
-function get_windows(windows)
-{
-	var i;
-	var wId;
-	var tabs;
-
-	wId = curwindow.id;
-	tabs = new Array;
-
-	/* gather all tabs into a single window */
-	for (i = 0; i < windows.length; i++) {
-		var window = windows[i];
-
-		tabs = tabs.concat(window.tabs);
-	}
-
-	tabs.sort(compare_tabs);
-
-	for (i = 0; i < tabs.length; i++) {
-		chrome.tabs.move(tabs[i].id, {"windowId": wId, "index": i});
-	}
-}
-
 function get_window(window)
 {
 	curwindow = window;
