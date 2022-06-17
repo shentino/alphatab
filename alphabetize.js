@@ -178,16 +178,14 @@ function compare_tabs(a, b)
 
 function get_window(window)
 {
-	curwindow = window;
-
 	var wId;
 	var tabs;
 	var i;
 
-	wId = curwindow.id;
+	wId = window.id;
 
 	tabs = new Array;
-	tabs = tabs.concat(curwindow.tabs);
+	tabs = tabs.concat(window.tabs);
 	tabs.sort(compare_tabs);
 
 	for (i = 0; i < tabs.length; i++) {
