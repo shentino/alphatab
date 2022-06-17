@@ -193,7 +193,7 @@ function sort_window(window)
 	}
 }
 
-function sort_tabs(tab)
+function sort_tabs()
 {
 	chrome.windows.getCurrent({"populate": true}, sort_window);
 }
