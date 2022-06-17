@@ -176,7 +176,7 @@ function compare_tabs(a, b)
 	return (a.index - b.index);
 }
 
-function get_window(window)
+function sort_window(window)
 {
 	var wId;
 	var tabs;
@@ -195,7 +195,7 @@ function get_window(window)
 
 function sort_tabs(tab)
 {
-	chrome.windows.getCurrent({"populate": true}, get_window);
+	chrome.windows.getCurrent({"populate": true}, sort_window);
 }
 
 chrome.action.onClicked.addListener(sort_tabs);
