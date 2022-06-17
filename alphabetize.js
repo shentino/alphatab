@@ -219,12 +219,10 @@ function load_settings()
 	)
 }
 
-document.addEventListener('DOMContentLoaded', load_settings);
-
 chrome.storage.onChanged.addListener(
 	function(changes, areaName) {
 		load_settings();
 	}
 );
 
-chrome.browserAction.onClicked.addListener(sort_tabs);
+chrome.action.onClicked.addListener(sort_tabs);
