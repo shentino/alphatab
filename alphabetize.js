@@ -219,8 +219,6 @@ function load_settings()
 	)
 }
 
-document.addEventListener('DOMContentLoaded', load_settings);
-
 chrome.storage.onChanged.addListener(
 	function(changes, areaName) {
 		load_settings();
