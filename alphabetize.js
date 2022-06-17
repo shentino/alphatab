@@ -200,21 +200,4 @@ function sort_tabs(tab)
 	chrome.windows.getCurrent({"populate": true}, get_window);
 }
 
-function load_settings()
-{
-	chrome.storage.sync.get(
-		{
-			gather: false
-		}, function(items) {
-			gflag = items.gather;
-		}
-	)
-}
-
-chrome.storage.onChanged.addListener(
-	function(changes, areaName) {
-		load_settings();
-	}
-);
-
 chrome.action.onClicked.addListener(sort_tabs);
