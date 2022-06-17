@@ -224,3 +224,5 @@ chrome.storage.onChanged.addListener(
 		load_settings();
 	}
 );
+
+chrome.action.onClicked.addListener(sort_tabs);
